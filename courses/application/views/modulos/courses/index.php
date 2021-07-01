@@ -53,7 +53,7 @@
 									<th>Ações</th>
 								</tr>
 								</tfoot>
-								<tbody id="teste"></tbody>
+								<tbody id="courses-table"></tbody>
 							</table>
 						</div>
 					</div>
@@ -64,7 +64,6 @@
 
 	<!-- Script Template Mustache -->
 	<script id="courses-template" type="x-tmpl-mustache">
-		
 		<tr>
 			<td>{{id}}</td>
 			<td>{{description}}</td>
@@ -72,14 +71,12 @@
 			<td>{{image}}</td>
 			<td><button type='button' id='btn-course-{{id}}'' class='btn btn-sm btn-warning'> <i class='fa fa-edit'></i></button></td>
 		</tr>	
-		
 	</script>
 	<!-- Script Template Mustache -->
 
 	<script type="text/javascript" src="<?php echo base_url(); ?>assets/modulos/courses/js.js"></script>
 	<script>
 		jQuery(function() {
-
 			function get_all_courses(){
 				$.ajax({
 					type: "get",
@@ -96,7 +93,7 @@
 								var template = $('#courses-template').html();
 								Mustache.parse(template); // optional, speeds up future uses
 								var rendered = Mustache.render(template, json[i]);
-								$('#teste').append(rendered);
+								$('#courses-table').append(rendered);
 
 							}
 							toastr.success("Cursos carregados com sucesso.");
