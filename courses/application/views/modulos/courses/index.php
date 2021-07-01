@@ -86,23 +86,26 @@
 					beforeSend:function(){
 						$('#courses-table').html("<tr><td colspan='5' style='text-align:center'><i class='fa fa-2x fa-spin fa-spinner align-middle'></i></td></tr>");
 					},
-					complete:function(data){
-						
-					},
+					complete:function(data){},
 					success: function(json){
-						$('#courses-table').html("");
-						try{
-							for (var i in json) {
-								var template = $('#courses-template').html();
-								Mustache.parse(template); // optional, speeds up future uses
-								var rendered = Mustache.render(template, json[i]);
-								$('#courses-table').append(rendered);
+						if ( json.length > 0 ) {
+							$('#courses-table').html("");
+							try{
+								for (var i in json) {
+									var template = $('#courses-template').html();
+									Mustache.parse(template); // optional, speeds up future uses
+									var rendered = Mustache.render(template, json[i]);
+									$('#courses-table').append(rendered);
+								}
+								toastr.success("Cursos carregados com sucesso.");	
+							} catch(e) {     
+								toastr.warning("Não foram encontrados cursos cadastrados");
 							}
-							toastr.success("Cursos carregados com sucesso.");
-							
-						} catch(e) {     
-							toastr.warning("Não foram encontrados cursos cadastrados");
-						}		
+						}
+						if(json.length <= 0) {
+							$('#courses-table').html("<tr><td colspan='5' style='text-align:center'>Nenhum resultado encontrado</td></tr>");
+							toastr.warning("Não há cursos cadastrados");
+						}
 					},
 					error: function(){                      
 						toastr.danger("Houve um erro no seu pedido. Tente novamente!");
