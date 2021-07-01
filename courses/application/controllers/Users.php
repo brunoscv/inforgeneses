@@ -1,27 +1,31 @@
-﻿<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 class Users extends MY_Controller {
-	public $data;	
-	function __construct(){
+
+	public function __construct(){
 		parent::__construct();
+		
 		$this->_auth();
 		
-		$this->load->model("Users_model");
+		$this->data['campos'] = array(
+			'u.nome' => 'Nome',
+			'u.email' => 'E-mail'
+		);
 		
-		//adicione os campos da busca
-		$camposFiltros["u.id"] = "Id";
-		$camposFiltros["u.usuario"] = "Usuário";
-		$camposFiltros["u.senha"] = "Senha";
-		$camposFiltros["u.email"] = "Email";
-		$camposFiltros["u.cidades_id"] = "cidades_id";
-		$camposFiltros["u.estados_id"] = "estados_id";
-
-		$this->data['campos']    = $camposFiltros;
 	}
 	
-	function index(){
+	public function userExists(){
+		header('Content-Type: application/json');
+		
+		$this->load->model("Users_model");
+		$result['data'] = ($this->Users_model->userExists($this->input->get("username"),  $this->input->get('id'))) ? false : true;						
+		echo json_encode($result['data']);	
+	}
+	
+	public function index(){
 		$perPage = '10';
 		$offset = ($this->input->get("per_page")) ? $this->input->get("per_page") : "0";
-
+		
 		if( !is_null($this->input->get('busca')) ){
 			$campo = $this->input->get('filtro_field', true);
 			$valor = $this->input->get('filtro_valor', true);
@@ -32,13 +36,15 @@ class Users extends MY_Controller {
 				}
 			}
 		}
-		$countUsers = $this->db
+		if( !hasPerfil(1) ){
+			$this->db->where("id >",1);
+		}
+		$countUsuarios = $this->db
 							->select("count(u.id) AS quantidade")
-							->from("users AS u")
-							->join("cidades AS c", "c.id = u.cidades_id", "left")
-							->join("estados AS e", "e.id = u.estados_id", "left")
+							->from("usuarios AS u")
 							->get()->row();
-		$quantidadeUsers = $countUsers->quantidade;
+		
+		$quantidadeUsuarios = $countUsuarios->quantidade;
 		
 		if( !is_null($this->input->get('busca')) ){
 			$campo = $this->input->get('filtro_field', true);
@@ -51,205 +57,150 @@ class Users extends MY_Controller {
 			}
 		}
 		
-		$resultUsers = $this->db
-							->select("u.id, u.usuario, u.email, c.nome AS cidade, e.sigla")
-							->from("users AS u")
-							->join("cidades AS c", "c.id = u.cidades_id", "left")
-							->join("estados AS e", "e.id = u.estados_id", "left")
-							->limit($perPage,$offset)
-							->get();
-
-		$this->data['listaUsers'] = $resultUsers->result();
+		if( !hasPerfil(1) ){
+			$this->db->where("id >",1);
+		}
+		$resultUsuarios = $this->db
+									->select("*")
+									->from("usuarios AS u")
+									->limit($perPage,$offset)
+									->get();
+		
+		$this->data['listaUsuarios'] = $resultUsuarios->result();
 		
 		$this->load->library('pagination');
-		$config['base_url'] = site_url("users/index")."?";
-		$config['total_rows'] = $quantidadeUsers;
+		$config['base_url'] = site_url("usuarios/index")."?";
+		$config['total_rows'] = $quantidadeUsuarios;
 		$config['per_page'] = $perPage;
 		
 		$this->pagination->initialize($config);
 		
 		$this->data['paginacao'] = $this->pagination->create_links(); 
 	}
-    
-    public function listaCidades() {
-    	$this->data['item'] = new stdClass();
-    	$estados_id = $this->input->post("estados_id");
+	
+	public function criar(){
+		$this->load->library('encrypt');
+		$this->load->model("Perfis_model");
 		
-    	$result['listaCidades'] = $this->Users_model->listaCidadesPorEstados($estados_id);
-    	
-		header('Content-Type: application/json', true);
-		echo json_encode($result);
-    	exit;
-    }
-
-    function criar(){
-		$this->data['item'] = new stdClass();
+		$this->data['item'] = (object) array();
+		$this->data['item']->perfis = array();
+		$this->data['listaPerfis'] = $this->Perfis_model->listaPerfis();
 		
-		$result = array();
-		$result['cidade'] = false;
-		
-		//Campos relacionados
-		//caso seja necessario adicione os relacionamento aqui
-		$estados = $this->Users_model->listaEstados();
-		$this->data['listaEstados'] = array();
-		$this->data['listaEstados'][''] = 'Selecione um Estado';
-		foreach ($estados as $estado) {
-			$this->data['listaEstados'][$estado->id] = $estado->nome;
-		}
-			$this->data['listaCidades'] = array();
-			$this->data['listaCidades'][''] = "Selecione uma Cidade";
-		//fim Campos relacionados
-		
-		if($this->input->post('enviar')){
-			//Imagem do Usuário
-			if($_FILES['imagem']['name']){
-					//Upload e Configurações do Envio das imagens
-					$config['upload_path'] = './public/uploads/usuarios/';
-					$config['allowed_types'] = 'jpg|png';
-					$config['max_size']     = '10000';
-
-		            $this->load->library('upload', $config);
-		            
-		            if(!$this->upload->do_upload('imagem')){
-		               	$this->data['msg_error'] = $this->upload->display_errors();
-		            } else {           	
-		            	$this->data['arquivo_data']  = $this->upload->data();
-	            	}
-            } else {
-
-            }
-			
-			if( $this->form_validation->run('Users') === FALSE || !empty($this->data['msg_error']) ){
-				$this->data['msg_error'] = (!empty($this->data['msg_error'])) ? $this->data['msg_error'] : validation_errors("<p>","</p>");
+		if( $this->input->post("enviar") ){
+			if( $this->form_validation->run('Usuarios') === FALSE ){
+				$this->data['msg_error'] = validation_errors("<p>","</p>");
 			} else {
+				$usuario = array();
+				$usuario['usuario'] = strtolower($this->input->post("usuario",TRUE));
+				$usuario['nome'] 	= $this->input->post("nome",TRUE);
+				$usuario['email'] 	= $this->input->post("email",TRUE);
+				$usuario['senha'] 	= $this->encrypt->encode($this->input->post("senha",TRUE));
+				$usuario['createdAt'] 	= date("Y-m-d H:i:s");
 				
-				//Preenche objeto com as informações do formulário		
-				$user	= array();
-				$user['usuario'] 		= strtolower($this->input->post("usuario",TRUE));
-				$user['email'] 		    = $this->input->post('email', TRUE);
-				$user['estados_id'] 	= $this->input->post('estados', TRUE);
-				$user['cidades_id'] 	= $this->input->post('cidades', TRUE);
-				if($this->input->post("senha")) {
-					$user['senha'] 		= $this->encrypt->encode($this->input->post("senha",TRUE));
-				}
+				$this->db->insert("usuarios", $usuario);
+				if( $this->input->post("perfis") ){
+					$usuario['id'] = $this->db->insert_id(); //pega o ultimo id inserido no BD
+					
+					$perfis = $this->input->post("perfis");
+					foreach($perfis as $perfil){
+						$usuario_perfil = array();
+						$usuario_perfil['usuarios_id']  = $usuario['id'];
+						$usuario_perfil['perfis_id'] = $perfil; 
+						$this->db->insert("usuarios_perfis", $usuario_perfil);
+					}
 
-				if(@$this->data['arquivo_data']['raw_name']) {
-					$user["imagem"] = $this->data['arquivo_data']['raw_name'].$this->data['arquivo_data']['file_ext'];
 				}
-				else {
-					$user["imagem"] = $this->input->post("imagem") ? $this->input->post("imagem") : NULL;
-				}
-
-				$this->db->insert("users", $user);
-				$this->session->set_flashdata("msg_success", "Registro adicionado com sucesso!");
-				redirect('users/index');
+				
+				$this->session->set_flashdata("msg_success", "Usuário adicionado com sucesso!");
+				redirect('usuarios/index');
 			}
-		} 
-    	
-    }
-    
+		}
+	
+	}
+	
 	public function editar(){
-		//carregue os MODELs necessários aqui
-		$id = $this->uri->segment(3);
-
-		$user = $this->db
-						->from("users AS m")
-						->where("id", $id)->get()->row();
+		$this->load->library('encrypt');
+		$this->load->model("Perfis_model");
+		$this->load->model("Usuarios_model");
 		
-		$estados = $this->Users_model->listaEstados();
-		$this->data['listaEstados'] = array();
-		$this->data['listaEstados'][''] = 'Selecione um Estado';
-		foreach ($estados as $estado) {
-			$this->data['listaEstados'][$estado->id] = $estado->nome;
+		$id = $this->uri->segment(3);
+		if( !hasPerfil(1) ){
+			$this->db->where("id > ",1);
 		}
-
-		$cidades = $this->Users_model->listaCidadesPorEstados($user->estados_id);
-		$this->data['listaCidades'] = array();
-		$this->data['listaCidades'][''] = "Selecione uma Cidade";
-		foreach ($cidades as $cidade) {
-			$this->data['listaCidades'][$cidade->id] = $cidade->nome;
-		}
-
-		if(!$user){
-			$this->session->set_flashdata("msg_error", "Registro não encontrado!");
-			redirect('users/index');
+		
+		$usuario = $this->db
+						->from("usuarios AS m")
+						->where("id", $id)->get()->row();
+		if( !$usuario ){
+			$this->session->set_flashdata("msg_error", "Usuário não encontrado!");
+			redirect('usuarios/index');
 		} else {
-			$this->data['item'] = $user;
-			if( $this->input->post('enviar') ){
-
-				//Imagem do Usuário
-				if($_FILES['imagem']['name']){
-					//Upload e Configurações do Envio das imagens
-					$config['upload_path'] = './public/uploads/usuarios/';
-					$config['allowed_types'] = 'jpg|png';
-					$config['max_size']     = '10000';
-
-		            $this->load->library('upload', $config);
-		            
-
-		            if(!$this->upload->do_upload('imagem')){
-		               	$this->data['msg_error'] = $this->upload->display_errors();
-		            } else {           	
-		            	$this->data['arquivo_data']  = $this->upload->data();
-	            	}
-	            } else {
-
-            	}
-            
-				if( $this->form_validation->run('Users/editar') === FALSE ){
-					$this->data['msg_error'] = (!empty($this->data['msg_error'])) ? $this->data['msg_error'] : validation_errors("<p>","</p>");
+			$this->data['item'] = &$usuario;
+			$this->data['item']->perfis = $this->Usuarios_model->getPerfisId($usuario->id);
+			$this->data['listaPerfis'] = $this->Perfis_model->listaPerfis();
+			
+			if( $this->input->post("enviar") ){
+				if( $this->form_validation->run('Usuarios') === FALSE ){
+					$this->data['msg_error'] = validation_errors();
 				} else {
+					$usuario = array();
+					$usuario['id'] 		= $id; 
+					$usuario['usuario'] = strtolower($this->input->post("usuario",TRUE));
+					$usuario['nome'] 	= $this->input->post("nome",TRUE);
+					$usuario['email'] 	= $this->input->post("email",TRUE);
+					$usuario['updatedAt'] 	= date("Y-m-d H:i:s");
 					
-					$user	= array();
-					$user['usuario']	= $this->input->post('usuario', true);
-					if($this->input->post("senha")) {
-						$user['senha']	= $this->encrypt->encode($this->input->post("senha",TRUE));
-					}
-					$user['email']	= $this->input->post('email', true);
-					$user['cidades_id']	= $this->input->post('cidades', true);
-					$user['estados_id']	= $this->input->post('estados', true);
-
-					if(@$this->data['arquivo_data']['raw_name']) {
-						$user["imagem"] = $this->data['arquivo_data']['raw_name'].$this->data['arquivo_data']['file_ext'];
-					}
-					else {
-						$user["imagem"] = $this->input->post("imagem") ? $this->input->post("imagem") : NULL;
+					if( $this->input->post("senha") ){
+						// $usuario['senha'] 	= $this->encrypt->encode($this->input->post("senha",TRUE));
+						$usuario['senha'] 	= $this->encrypt->encode($this->input->post("senha",TRUE));
 					}
 					
+					$this->db->where("id", $usuario['id']);
+					$this->db->update("usuarios", $usuario);
+					
+					if( $this->input->post("perfis") ){
+						$this->db->where("usuarios_id",$usuario["id"]);
+						$this->db->delete("usuarios_perfis");
+						
+						$perfis = $this->input->post("perfis");
+						foreach($perfis as $perfil){
+							$usuario_perfil = array();
+							$usuario_perfil['usuarios_id']  = $usuario['id'];
+							$usuario_perfil['perfis_id'] = $perfil; 
+							$this->db->insert("usuarios_perfis", $usuario_perfil);
+						}
 
-					$this->db->where("id",$id);
-					$this->db->update("users",$user);
-				
-					$this->session->set_flashdata("msg_success", "Registro <b>#{$user->id}</b> atualizado!");
-					redirect('users/index');
+					}
+					
+					$this->session->set_flashdata("msg_success", "Usuário ".$usuario['usuario']." editado com sucesso!");
+					redirect('usuarios/index');
 				}
+			}
+		}
+	}
+
+	public function delete(){
+		$id = $this->uri->segment(3);
+		
+		$usuario = $this->db
+						->from("usuarios")
+						->where("id", $id)->get()->row();
+		if( !$usuario ){
+			$this->session->set_flashdata("msg_error", "Usuário não encontrado!");
+			redirect('usuarios/index');
+		} else {
+			$this->data['item'] = &$usuario;
+			if( $this->input->post("enviar") ){
+					
+				$this->db->where("id", $usuario->id);
+				$this->db->delete("usuarios");
+				$this->session->set_flashdata("msg_success", "Usuário adicionado com sucesso!");
+				redirect('usuarios/index');
 			}
 		}
 	}
 	
-	public function delete($id){
-		$id = $this->uri->segment(3);
-		
-		$user = $this->db
-						->from("users AS m")
-						->where("id", $id)->get()->row();
-		$this->data['item'] = $user;
-		
-		if( !$user ){
-			$this->session->set_flashdata("msg_error", "Registro não encontrado!");
-			redirect('users/index');
-		} else {
-			$this->data['item'] = $user;
-			
-			if( $this->input->post("enviar") ){
-				$this->db->where("id", $user->id);
-				$this->db->delete("users");
-				$this->session->set_flashdata("msg_success", "Registro adicionado com sucesso!");
-				redirect('users/index');
-			}
-		}
-	}
 }
 
-/* End of file Userses.php */
-/* Location: ./system/application/controllers/Userses.php */
+/* End of file welcome.php */
+/* Location: ./application/controllers/welcome.php */

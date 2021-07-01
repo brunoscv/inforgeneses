@@ -1,6 +1,6 @@
 //;
 $(function() {
-	$("#form_usuario").validate({
+	$("#form_user").validate({
 		ignore : [],
 		errorElement : "em",
 		onfocusout : function(element) {
@@ -23,40 +23,40 @@ $(function() {
 			return false;
 		},
 		rules : {
-			nome : {
+			name : {
 				required : true
 			},
 			email : {
 				email : true
 			},
-			usuario : {
+			username : {
 				required : true,
 				remote : {
-					url : base_url + "usuarios/usuarioExiste",
+					url : base_url + "users/userExists",
 					data:{id:$("#id").val()}
 				}
 			},
-			senha : {
+			password : {
 				required : true,
 				minlength : 6
 			},
-			senha2 : {
+			password2 : {
 				required : true,
-				equalTo : '#senha'
+				equalTo : '#password'
 			},
-			"perfis[]":{
+			"profiles[]":{
 				required : true,
 				min_length: 1,
 			}
 		},
 		messages : {
-			usuario:{
+			user:{
 				remote: "Usuário já cadastrado"
 			}
 		}
 	});
 
-	$("#form_alterarsenha").validate({
+	$("#form_updatepassword").validate({
 		ignore : [],
 		errorElement : "em",
 		onfocusout : function(element) {
@@ -79,17 +79,17 @@ $(function() {
 			return false;
 		},
 		rules : {
-			senha_antiga : {
+			password_old : {
 				required : true,
 				minlength : 6
 			},
-			nova_senha : {
+			new_password : {
 				required : true,
 				minlength : 6
 			},
-			senha2 : {
+			password2 : {
 				required : true,
-				equalTo : '#nova_senha'
+				equalTo : '#new_password'
 			}
 		}
 	});

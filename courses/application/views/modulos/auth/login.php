@@ -4,9 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Seu Canto Imóveis">
-  <meta name="author" content="Seu Canto Imóveis">
-  <title>Seu Canto Dashboard</title>
+  <meta name="description" content="Inforgeneses">
+  <meta name="author" content="Inforgeneses">
+  <title>Login</title>
   <!-- Favicon -->
   <link rel="icon" href="<?php echo base_url(); ?>assets/img/brand/favicon.png" type="image/png">
   <!-- Fonts -->
@@ -23,7 +23,7 @@
   <nav id="navbar-main" class="navbar navbar-horizontal navbar-transparent navbar-main navbar-expand-lg navbar-light">
     <div class="container">
       <a class="navbar-brand" href="<?php echo base_url(); ?>">
-        <img src="<?php echo base_url(); ?>assets/img/theme/logo-seucanto-branco.svg">
+        <img src="<?php echo base_url(); ?>assets/img/brand/white.png">
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -33,7 +33,7 @@
           <div class="row">
             <div class="col-6 collapse-brand">
               <a href="<?php echo base_url(); ?>">
-                <img src="<?php echo base_url(); ?>assets/img/theme/logo-seucanto-original.svg">
+                <img src="<?php echo base_url(); ?>assets/img/brand/white.png">
               </a>
             </div>
             <div class="col-6 collapse-close">
@@ -47,7 +47,7 @@
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
             <a href="<?php echo base_url(); ?>homepage" class="nav-link">
-              <span class="nav-link-inner--text">Seu Canto Imóveis</span>
+              <span class="nav-link-inner--text">Inforgeneses</span>
             </a>
           </li>
         </ul>
@@ -93,7 +93,7 @@
             <div class="card-body px-lg-5 py-lg-5">
               <?php $this->load->view('layout/messages');?>
               <div class="text-center text-muted mb-4">
-                <small>Quer fazer parte da Seu Canto? </small>
+                <small>Insira seu email e senha para acesso: </small>
               </div>
               <form class="m-t-md" action="<?php echo current_url(); ?>" method="post">
                 <div class="form-group mb-3">
@@ -101,7 +101,7 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                     </div>
-                    <input type="text" class="form-control" name="usuario" placeholder="Usuário" required style="padding-left:1em">
+                    <input type="text" class="form-control" name="username" placeholder="Usuário" required style="padding-left:1em">
                   </div>
                 </div>
                 <div class="form-group">
@@ -109,24 +109,11 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                     </div>
-                    <input type="password" class="form-control" name="senha" placeholder="Senha" required style="padding-left:1em">
+                    <input type="password" class="form-control" name="password" placeholder="Senha" required style="padding-left:1em">
                   </div>
                 </div>
-                <!-- <div class="custom-control custom-control-alternative custom-checkbox">
-                  <input class="custom-control-input" id=" customCheckLogin" type="checkbox">
-                  <label class="custom-control-label" for=" customCheckLogin">
-                    <span class="text-muted">Remember me</span>
-                  </label>
-                  
-                </div>
-                <div class="custom-control custom-control-alternative custom-checkbox">
-                  <span class="custom-control-label" for=" customCheckLogin">
-                    <span class="text-muted">Esqueceu sua</span>
-                  </label>
-                  
-                </div> -->
                 <div class="text-center">
-                  <button type="submit" value="enviar" class="btn btn-warning my-4 btn-block">Entrar</button>
+                  <input type="submit" name="send" class="btn btn-warning my-4 btn-block" value="Entrar" />
                 </div>
                 <div class="text-center">
                     <p>Registre-se <a style="color: #fb6340 !important" href="<?= site_url();?>auth/register">AGORA!</a></p>
@@ -144,7 +131,7 @@
       <div class="row align-items-center justify-content-xl-between">
         <div class="col-xl-6">
           <div class="copyright text-center text-xl-left text-muted">
-            &copy; <?= date("Y")?> <a href="#" class="font-weight-bold ml-1" target="_blank" style="color: #fff !important">Seu Canto Imóveis</a>
+            &copy; <?= date("Y")?> <a href="#" class="font-weight-bold ml-1" target="_blank" style="color: #fff !important">Inforgeneses</a>
           </div>
         </div>
       </div>

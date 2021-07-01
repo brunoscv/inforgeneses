@@ -140,7 +140,7 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                     </div>
-                    <input type="password" class="form-control" name="senha2" placeholder="Confirmação" style="padding-left:1em" required>
+                    <input type="password" class="form-control" name="password2" placeholder="Confirmação" style="padding-left:1em" required>
                   </div>
                 </div>
                 <div class="form-group">

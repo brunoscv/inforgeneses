@@ -1,91 +1,92 @@
+//;
 $(function() {
-
-
-	// validação formulário criação de usuário site
-	$( "#form_usuarios" ).validate( {
-		// debug: true,
-		rules: {
-			nome: "required",
-			email: {
-				required: true,
-				email: true
-			},
-			telefone: {
-				required: true,
-				minlength: 13,
-			},
-			senha: {
-				required: true,
-				minlength: 6
-			},
-			senha2: {
-				required: true,
-				// minlength: 6,
-				equalTo: "#senha"
-			},
-		},
-		messages: {
-			nome: "Digite seu nome e sobrenome.",
-			email: "Digite um e-mail válido.",
-			telefone: "Digite seu telefone com DDD.",
-			senha: {
-				required: "Digite sua senha.",
-				minlength: "Sua senha deve ter pelo menos 6 caracteres."
-			},
-			senha2: {
-				required: "Digite novamente sua senha",
-				// minlength: "Sua senha deve ter pelo menos 6 caracteres.",
-				equalTo: "Senhas não coincidem. Tente novamente."
+	$("#form_users").validate({
+		ignore : [],
+		errorElement : "em",
+		onfocusout : function(element) {
+			if ((!this.check(element) || !this.checkable(element) ) && (element.name in this.submitted || !this.optional(element))) {
+				var currentObj = this;
+				var currentElement = element;
+				var delay = function() {
+					currentObj.element(currentElement);
+				};
+				setTimeout(delay, 0);
 			}
 		},
-		errorElement: "em",
-		errorPlacement: function ( error, element ) {
-			// Add the `help-block` class to the error element
-			error.addClass( "help-block" );
-			// Add `has-feedback` class to the parent div.form-group
-			// in order to add icons to inputs
-			element.parent().addClass( "has-feedback" );
-
-			if ( element.prop( "type" ) === "checkbox" ) {
-				error.insertAfter( element.parent( "label" ) );
-			} else {
-				error.insertAfter( element );
+		invalidHandler : function(form, validator) {
+			var errors = validator.numberOfInvalids();
+			if (errors) {
+				validator.errorList[0].element.focus();
+				var aba = $(validator.errorList[0].element).parents('div.tab-pane').attr('id');
+				$("[href='#" + aba + "']").click();
 			}
-
-			// Add the span element, if doesn't exists, and apply the icon classes to it.
-			if ( !element.next( "span" )[ 0 ] ) {
-				$( "<span class='glyphicon glyphicon-remove form-control-feedback'></span>" ).insertAfter( element );
+			return false;
+		},
+		rules : {
+			name : {
+				required : true
+			},
+			email : {
+				email : true
+			},
+			username : {
+				required : true,
+				remote : {
+					url : base_url + "users/userExists",
+					data:{id:$("#id").val()}
+				}
+			},
+			password : {
+				required : true,
+				minlength : 6
+			},
+			password2 : {
+				required : true,
+				equalTo : '#password'
+			},
+		},
+		messages : {
+			user:{
+				remote: "Usuário já cadastrado"
 			}
-		},
-		success: function ( label, element ) {
-			// Add the span element, if doesn't exists, and apply the icon classes to it.
-			if ( !$( element ).next( "span" )[ 0 ] ) {
-				$( "<span class='glyphicon glyphicon-ok form-control-feedback'></span>" ).insertAfter( $( element ) );
-			}
-		},
-		highlight: function ( element, errorClass, validClass ) {
-			// adiciona classe de campo inválido ao elemento
-			$( element ).addClass( "is-invalid" ).removeClass( "is-valid" );
-			// aumenta a margem inferior do elemento para exibição da mensagem de ajuda
-			$( element ).parent().parent().addClass( "mb-4" ).removeClass( "mb-2" );
-			// define cor de erro para o input
-			$( element ).attr("style", "color: #fb6340 !important");
-
-			$( element ).parent().addClass( "has-danger" ).removeClass( "has-success" );
-			$( element ).next( "span" ).addClass( "glyphicon-remove" ).removeClass( "glyphicon-ok" );
-		},
-		unhighlight: function ( element, errorClass, validClass ) {
-			// remove a classe de campo inválido do elemento
-			$( element ).removeClass( "is-invalid" );;
-			// retorna a margem inferior do elemento para o padrão
-			$( element ).parent().parent().addClass( "mb-2" ).removeClass( "mb-4" );
-			// remove cor de erro do input 
-			$( element ).removeAttr("style", "color: #fb6340 !important");
-
-			$( element ).parent().removeClass( "has-danger" );
-			$( element ).next( "span" ).addClass( "glyphicon-ok" ).removeClass( "glyphicon-remove" );
 		}
-	} );
+	});
 
-
+	$("#form_updatepassword").validate({
+		ignore : [],
+		errorElement : "em",
+		onfocusout : function(element) {
+			if ((!this.check(element) || !this.checkable(element) ) && (element.name in this.submitted || !this.optional(element))) {
+				var currentObj = this;
+				var currentElement = element;
+				var delay = function() {
+					currentObj.element(currentElement);
+				};
+				setTimeout(delay, 0);
+			}
+		},
+		invalidHandler : function(form, validator) {
+			var errors = validator.numberOfInvalids();
+			if (errors) {
+				validator.errorList[0].element.focus();
+				var aba = $(validator.errorList[0].element).parents('div.tab-pane').attr('id');
+				$("[href='#" + aba + "']").click();
+			}
+			return false;
+		},
+		rules : {
+			password_old : {
+				required : true,
+				minlength : 6
+			},
+			new_password : {
+				required : true,
+				minlength : 6
+			},
+			password2 : {
+				required : true,
+				equalTo : '#new_password'
+			}
+		}
+	});
 }); 

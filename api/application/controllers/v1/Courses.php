@@ -67,11 +67,9 @@ class Courses extends REST_Controller {
     public function index_put($id)
     {
         $input = $this->put();
-
-        //arShow($input); exit;
         $this->db->update('courses', $input, array('id'=>$id));
      
-        $this->response(['Item updated successfully.'], REST_Controller::HTTP_OK);
+        $this->response(['Curso editado com sucesso.'], REST_Controller::HTTP_OK);
     }
      
     /**
@@ -85,7 +83,7 @@ class Courses extends REST_Controller {
         
         if($course) {
             $this->db->delete('courses', array('id'=>$id));
-            $this->response(['Item deleted successfully.'], REST_Controller::HTTP_OK);
+            $this->response(['Curso apagado com sucesso.'], REST_Controller::HTTP_OK);
 
         }
         

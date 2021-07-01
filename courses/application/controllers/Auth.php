@@ -5,103 +5,87 @@ class Auth extends MY_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+
+		$this->load->model("Users_model");
 	}
 	
 	public function login()
 	{
-		if ($this->session->userdata('cursos')['users_ID'])
+		
+		if ($this->session->userdata('courses')['users_ID'])
 		{
 			redirect("dashboard");
 		}
 
-		$validation = array(
-			array('field' => 'usuario', 'rules' => 'required'),
-			array('field' => 'senha', 'rules' => 'required')
-		);
+		if( $this->input->post("send") ){
 
-		$this->form_validation->set_rules($validation);
-		
-		if ($this->form_validation->run() == true) 
-		{
-			$user_post = $this->input->post("usuario");
-			$pass_post = $this->input->post("senha");
+			$user_post = $this->input->post("username");
+			$pass_post = $this->input->post("password");
 			/* Busca usuário no bd */
-			$usuario = $this->db->select("*")->from('usuarios')->where('email', $user_post)->get()->row();
+			$user = $this->db->select("*")->from('users')->where('username', $user_post)->get()->row();
 
 			/* Checa se o usuário existe, caso não retorna uma mensagem de erro e redireciona para a mesma view */
-			if ($usuario){
-				/* Checa o status do usuário, caso 1 o login é efetuado, caso contrário retorna uma mensagem de erro e um e-mail para confirmação é enviado */
-				if ($usuario->status == 1){
+			if ($user){
+				// Verifica a password do usuário e cria a sessão se estiver correta
+				if($this->_resolve_user_login($user_post, $pass_post)) {
+					$user_ID 	= $this->_get_user_ID_from_username($user_post);
+					$user		= $this->_get_user_information_from_ID($user_ID);;
+					$profile 	= $this->_get_user_profile_from_ID($user_ID);
+					$ip_address = $this->input->ip_address();
 					
-					// Verifica a senha do usuário e cria a sessão se estiver correta
-					if($this->_resolve_user_login($user_post, $pass_post)) {
-						$user_ID 	= $this->_get_user_ID_from_username($user_post);
-						$user		= $this->_get_user_information_from_ID($user_ID);;
-						$profile 	= $this->_get_user_profile_from_ID($user_ID);
-						$ip_address = $this->input->ip_address();
-						
-						$create_session = array(
-							'users_ID' => $user_ID,
-							'nome' => $user->nome,
-							'usuario' => $user->usuario,
-							'email' => $user->email,
-							'principal' => $user->principal,
-							'clientes_id' => $user->clientes_id,
-							'perfis' => $profile,
-							'ip_address' => $ip_address,
-						);
-		
-						$this->session->set_userdata('cursos', $create_session);
-						redirect();
-					}
+					$create_session = array(
+						'users_ID' => $user_ID,
+						'name' => $user->name,
+						'username' => $user->username,
+						'email' => $user->email,
+						'principal' => $user->principal,
+						'profiles' => $profile,
+						'ip_address' => $ip_address,
+					);
 
-					// Se a senha não estiver correta exibe mensagem de erro
-					$this->session->set_flashdata("msg_error", "Senha incorreta!");
-					redirect('auth/login');
-
-				}else if($usuario->status_cadastro == 2){
-					$this->session->set_flashdata("msg_error", "Você precisa finalizar o login, um link de confirmação foi enviado para seu e-mail");
-					$this->enviarEmail($usuario->email, true);
-					redirect('auth/login');
+					$this->session->set_userdata('courses', $create_session);
+					redirect();
 				}
-				// $this->session->set_flashdata("msg_error", "Você precisa finalizar o login!");
-				// redirect('auth/login');
+
+				// Se a password não estiver correta exibe mensagem de erro
+				$this->session->set_flashdata("msg_error", "senha incorreta!");
+				redirect('auth/login');				
 			}
-			$this->session->set_flashdata("msg_error", "Usuário não cadastrado");
+			$this->session->set_flashdata("msg_error", "Usuário não encontrado!");
 			redirect('auth/login');
-		} 
+		}
 		$this->load->view("modulos/auth/login");
 	}
 
 	private function _resolve_user_login($username, $password)
 	{
-		$this->db->where('usuario', $username);
-		$hash = $this->db->get('usuarios')->row('senha');
+		$this->db->where('username', $username);
+		$hash = $this->db->get('users')->row('password');
 		return $this->_verify_password_hash($password, $hash);
 	}
 
 	private function _get_user_ID_from_username($username)
 	{
 		$this->db->select('id');
-		$this->db->from('usuarios');
-		$this->db->where('usuario', $username);
+		$this->db->from('users');
+		$this->db->where('username', $username);
 		return $this->db->get()->row('id');
 	}
 
 	private function _get_user_information_from_ID($user_ID)
 	{
-		$this->db->select('id, nome, usuario, email, clientes_id, principal');
-		$this->db->from('usuarios');
+		$this->db->select('id, name, username, email, principal');
+		$this->db->from('users');
 		$this->db->where('id', $user_ID);
 		return $this->db->get()->row();
 	}
 
 	private function _get_user_profile_from_ID($user_ID)
 	{
-		$this->db->select('perfis_id');
-		$this->db->from('usuarios_perfis');
-		$this->db->where('usuarios_id', $user_ID);
-		return $this->db->get()->row('perfis_id');
+		$this->db->select('profiles_id');
+		$this->db->from('user_profiles');
+		$this->db->where('users_id', $user_ID);
+		return $this->db->get()->row('profiles_id');
 	}
 
 	private function _verify_password_hash($password, $hash)
@@ -111,39 +95,39 @@ class Auth extends MY_Controller {
 
 	public function register()
 	{
+
 		$this->load->library('encrypt');
-		if ($this->input->post("enviar")) {
-			$this->load->model("Usuarios_model");
-			$usuario = $this->Usuarios_model->getUsuario($this->input->post("usuario"));
-			if ($usuario) {
+		if ($this->input->post("send")) {
+			$user = $this->Users_model->get_user($this->input->post("username"));
+			if ($user) {
 				$this->data['msg_error'] = "Usuário já cadastrado";
 			} else {
 
-				$usuario = array();
-				$usuario['usuario'] 		= strtolower($this->input->post("email", TRUE));
-				$usuario['nome'] 			= ucwords(strtolower($this->input->post("nome", TRUE)));
-				$usuario['email'] 			= strtolower($this->input->post("email", TRUE));
-				$usuario['telefone'] 		= $this->input->post("telefone", TRUE);
-				$usuario['senha'] 			= password_hash($this->input->post("senha", TRUE), PASSWORD_BCRYPT);
-				$usuario['status'] 			= 1;
-				$usuario['createdAt'] 		= date("Y-m-d H:i:s");
+				$user = array();
+				$user['username']  = strtolower($this->input->post("email", TRUE));
+				$user['name'] 	   = ucwords(strtolower($this->input->post("name", TRUE)));
+				$user['email'] 	   = strtolower($this->input->post("email", TRUE));
+				$user['phone'] 	   = $this->input->post("phone", TRUE);
+				$user['password']  = password_hash($this->input->post("password", TRUE), PASSWORD_BCRYPT);
+				$user['status']    = 1;
+				$user['createdAt'] = date("Y-m-d H:i:s");
 				
-				$usuarioExiste = $this->db
-					->from("usuarios AS m")
-					->where("email", $usuario['email'])->get()->row();
+				$userExists = $this->db
+					->from("users AS m")
+					->where("email", $user['email'])->get()->row();
 				
-				if($usuarioExiste) {
+				if($userExists) {
 					$this->session->set_flashdata("msg_error", "Usuário já existe!");
 					redirect('auth/register');
 				}
 
-				$this->db->insert("usuarios", $usuario);
-				$usuario['id'] = $this->db->insert_id(); //pega o ultimo id inserido no BD
+				$this->db->insert("users", $user);
+				$user['id'] = $this->db->insert_id(); //pega o ultimo id inserido no BD
 
-				$usuario_perfil = array();
-				$usuario_perfil['usuarios_id']  = $usuario['id'];
-				$usuario_perfil['perfis_id'] = 1;
-				$this->db->insert("usuarios_perfis", $usuario_perfil);
+				$user_profile = array();
+				$user_profile['users_id']  = $user['id'];
+				$user_profile['profiles_id'] = 1;
+				$this->db->insert("user_profiles", $user_profile);
 				$this->session->set_flashdata("msg_success", "Usuário registrado com sucesso");
 
 				redirect('auth/login');
@@ -153,7 +137,7 @@ class Auth extends MY_Controller {
 	}
 	
 	public function logout(){
-		//$this->session->unset_userdata($usuarioLogado);
+		//$this->session->unset_userdata($userLogado);
 		$this->session->sess_destroy();
 		redirect("auth/login");
 	}

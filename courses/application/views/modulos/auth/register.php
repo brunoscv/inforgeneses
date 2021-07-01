@@ -4,9 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Seu Canto Imóveis">
-  <meta name="author" content="Seu Canto Imóveis">
-  <title>Seu Canto Dashboard</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Dashboard</title>
   <!-- Favicon -->
   <link rel="icon" href="<?php echo base_url(); ?>assets/img/brand/favicon.png" type="image/png">
   <!-- Fonts -->
@@ -33,7 +33,7 @@
   <nav id="navbar-main" class="navbar navbar-horizontal navbar-transparent navbar-main navbar-expand-lg navbar-light">
     <div class="container">
       <a class="navbar-brand" href="<?php echo base_url(); ?>">
-        <img src="<?php echo base_url(); ?>assets/img/theme/logo-seucanto-branco.svg">
+        <img src="<?php echo base_url(); ?>assets/img/brand/white.png">
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -43,7 +43,7 @@
           <div class="row">
             <div class="col-6 collapse-brand">
               <a href="<?php echo base_url(); ?>">
-                <img src="<?php echo base_url(); ?>assets/img/brand/blue.png">
+                <img src="<?php echo base_url(); ?>assets/img/brand/white.png">
               </a>
             </div>
             <div class="col-6 collapse-close">
@@ -54,34 +54,22 @@
             </div>
           </div>
         </div>
-        <!-- <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a href="<?php echo base_url(); ?>" class="nav-link">
-              <span class="nav-link-inner--text">Seu Canto Imóveis</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="<?php echo base_url(); ?>auth/site_login" class="nav-link">
-              <span class="nav-link-inner--text">Acessar minha conta</span>
-            </a>
-          </li>
-        </ul> -->
         <hr class="d-lg-none" />
         <ul class="navbar-nav align-items-lg-center ml-lg-auto">
           <li class="nav-item">
-            <a class="nav-link nav-link-icon" href="https://www.facebook.com/seucantoimoveis" target="_blank" data-toggle="tooltip" data-original-title="Curtir">
+            <a class="nav-link nav-link-icon" href="https://www.facebook.com" target="_blank" data-toggle="tooltip" data-original-title="Curtir">
               <i class="fab fa-facebook-square"></i>
               <span class="nav-link-inner--text d-lg-none">Facebook</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-icon" href="https://www.instagram.com/seucantoimoveis" target="_blank" data-toggle="tooltip" data-original-title="Seguir">
+            <a class="nav-link nav-link-icon" href="https://www.instagram.com" target="_blank" data-toggle="tooltip" data-original-title="Seguir">
               <i class="fab fa-instagram"></i>
               <span class="nav-link-inner--text d-lg-none">Instagram</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-icon" href="https://twitter.com/seucantoimoveis" target="_blank" data-toggle="tooltip" data-original-title="Seguir">
+            <a class="nav-link nav-link-icon" href="https://twitter.com" target="_blank" data-toggle="tooltip" data-original-title="Seguir">
               <i class="fab fa-twitter-square"></i>
               <span class="nav-link-inner--text d-lg-none">Twitter</span>
             </a>
@@ -110,14 +98,14 @@
               <div class="text-center text-muted mb-4">
                 <small>Crie seus dados de acesso: </small>
               </div>
-              <form id="form_usuarios" action="<?php echo current_url(); ?>" method="post" enctype="multipart/form-data">
+              <form id="form_users" action="<?php echo current_url(); ?>" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="r" value="<?php echo $this->input->get_post("r"); ?>" />
                 <div class="form-group mb-2">
                   <div class="input-group input-group-merge input-group-alternative">
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fa fa-user"></i></span>
                     </div>
-                    <input type="text" class="form-control pl-3" id="nome" name="nome" placeholder="Nome" required>
+                    <input type="text" class="form-control pl-3" id="nome" name="name" placeholder="Nome" required>
                   </div>
                 </div>
                 <div class="form-group mb-2">
@@ -133,7 +121,7 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="fa fa-phone"></i></span>
                     </div>
-                    <input type="text" class="form-control pl-3" name="telefone" id="telefone" placeholder="ex: (86) 9 9999-9999" required>
+                    <input type="text" class="form-control pl-3" name="phone" id="phone" placeholder="ex: (86) 9 9999-9999" required>
                   </div>
                 </div>
                 <div class="form-group mb-2">
@@ -141,7 +129,7 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                     </div>
-                    <input type="password" id="senha" class="form-control pl-3" name="senha" placeholder="Senha" required>
+                    <input type="password" id="password" class="form-control pl-3" name="password" placeholder="Senha" required>
                   </div>
                 </div>
                 <div class="form-group">
@@ -149,24 +137,15 @@
                     <div class="input-group-prepend">
                       <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                     </div>
-                    <input type="password" class="form-control pl-3" name="senha2" placeholder="Confirmação" required>
+                    <input type="password" class="form-control pl-3" name="password2" placeholder="Confirmação" required>
                   </div>
                 </div>
-                <!-- <div class="form-group">
-                  <small>Escolha seu perfil de acesso</small>
-                  <select name="perfis" class="form-control" data-toggle="select" required>
-                    <option value="5">Cliente</option>
-                    <option value="7">Corretor</option>
-                    <option value="6">Parceiro</option>
-                    <option value="8">Proprietário</option>
-                  </select>
-                </div> -->
 
                 <div class="text-center">
-                  <input type="submit" name="enviar" class="btn btn-warning my-4 btn-block" value="Criar minha conta">
+                  <input type="submit" name="send" class="btn btn-warning my-4 btn-block" value="Criar minha conta">
                 </div>
                 <div class="text-center">
-                  Já é nosso cliente? Clique <a href="<?= site_url('auth/site_login')?>">aqui</a> para acessar a Área do Cliente.
+                  Já é nosso cliente? Clique <a href="<?= site_url('auth/login')?>">aqui</a> para acessar a Área do Cliente.
                 </div>
               </form>
             </div>
@@ -181,7 +160,7 @@
       <div class="row align-items-center justify-content-xl-between">
         <div class="col-xl-6">
           <div class="copyright text-center text-xl-left text-muted">
-            &copy; <?= date("Y") ?> <a href="#" class="font-weight-bold ml-1" target="_blank" style="color: #fff !important">Seu Canto Imóveis</a>
+            &copy; <?= date("Y") ?> <a href="#" class="font-weight-bold ml-1" target="_blank" style="color: #fff !important"></a>
           </div>
         </div>
       </div>
@@ -195,7 +174,7 @@
   <script src="<?php echo base_url(); ?>assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
   <script src="<?php echo base_url(); ?>assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
   <script src="<?php echo base_url(); ?>assets/plugins/maskedinput/jquery.maskedinput-1.3.min.js"></script>
-  <script> $("#telefone").mask("(99) 9 9999-9999"); </script>
+  <script> $("#phone").mask("(99) 9 9999-9999"); </script>
   <!-- Optional JS -->
   <!-- <script src="<?php echo base_url(); ?>assets/vendor/select2/dist/js/select2.min.js"></script> -->
   <!-- Argon JS -->
