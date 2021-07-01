@@ -84,25 +84,28 @@
 					cache: false,               
 					//data: $('#userForm').serialize(),
 					beforeSend:function(){
-						$(this).html("<i class='fa fa-2x fa-spin fa-spinner align-middle'></i>");
+						$('#courses-table').html("<tr><td colspan='5' style='text-align:center'><i class='fa fa-2x fa-spin fa-spinner align-middle'></i></td></tr>");
 					},
-					complete:function(data){},
-					success: function(json){                        
+					complete:function(data){
+						
+					},
+					success: function(json){
+						$('#courses-table').html("");
 						try{
 							for (var i in json) {
 								var template = $('#courses-template').html();
 								Mustache.parse(template); // optional, speeds up future uses
 								var rendered = Mustache.render(template, json[i]);
 								$('#courses-table').append(rendered);
-
 							}
 							toastr.success("Cursos carregados com sucesso.");
+							
 						} catch(e) {     
-							alert('Não foi possivel encontrar resultados');
+							toastr.warning("Não foram encontrados cursos cadastrados");
 						}		
 					},
 					error: function(){                      
-						alert('Houve algum erro no pedido. Tente novamente');
+						toastr.danger("Houve um erro no seu pedido. Tente novamente!");
 					}
 				});
 			}
