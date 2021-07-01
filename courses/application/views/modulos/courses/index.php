@@ -34,7 +34,7 @@
 							<h3 class="mb-0">Seus Cursos</h3>
 						</div>
 						<div class="table-responsive py-4">
-							<table class="table table-flush" id="datatable-courses">
+							<table class="table table-flush">
 								<thead class="thead-light">
 								<tr>
 									<th>#</th>
@@ -53,9 +53,7 @@
 									<th>Ações</th>
 								</tr>
 								</tfoot>
-								<tbody>
-								
-								</tbody>
+								<tbody id="teste"></tbody>
 							</table>
 						</div>
 					</div>
@@ -64,52 +62,53 @@
 		</div>
 	</div>
 
+	<!-- Script Template Mustache -->
+	<script id="courses-template" type="x-tmpl-mustache">
+		
+		<tr>
+			<td>{{id}}</td>
+			<td>{{description}}</td>
+			<td>{{price}}</td>
+			<td>{{image}}</td>
+			<td><button type='button' id='btn-course-{{id}}'' class='btn btn-sm btn-warning'> <i class='fa fa-edit'></i></button></td>
+		</tr>	
+		
+	</script>
+	<!-- Script Template Mustache -->
+
 	<script type="text/javascript" src="<?php echo base_url(); ?>assets/modulos/courses/js.js"></script>
 	<script>
-		$( document ).ready(function() {
-			$('#datatable-courses').DataTable({
-				//"pagingType": "full_numbers",
-				// "lengthMenu": [
-				// 	[25, 50, 75, 100, -1],
-				// 	[25, 50, 75, 100, "All"]
-				// ],
-				"bFilter": true,
-				responsive: true,
-				order: [[0, "desc"]],
-				language: {
-					paginate: {
-						previous: "<i class='fas fa-angle-left'>",
-						next: "<i class='fas fa-angle-right'>"
-					}
-				}
-			});
+		jQuery(function() {
 
-			function makeAjaxCall(){
+			function get_all_courses(){
 				$.ajax({
 					type: "get",
-					url: "<?= api_url(); ?>",
+					url: "<?= api_url(); ?>/api/v1/courses",
 					cache: false,               
-					data: $('#userForm').serialize(),
+					//data: $('#userForm').serialize(),
+					beforeSend:function(){
+						$(this).html("<i class='fa fa-2x fa-spin fa-spinner align-middle'></i>");
+					},
+					complete:function(data){},
 					success: function(json){                        
-					try{        
-						var obj = jQuery.parseJSON(json);
-						alert( obj['STATUS']);
+						try{
+							for (var i in json) {
+								var template = $('#courses-template').html();
+								Mustache.parse(template); // optional, speeds up future uses
+								var rendered = Mustache.render(template, json[i]);
+								$('#teste').append(rendered);
 
-
-					}catch(e) {     
-						alert('Exception while request..');
-					}       
+							}
+							toastr.success("Cursos carregados com sucesso.");
+						} catch(e) {     
+							alert('Não foi possivel encontrar resultados');
+						}		
 					},
 					error: function(){                      
-						alert('Error while request..');
+						alert('Houve algum erro no pedido. Tente novamente');
 					}
-			});
-
-			makeAjaxCall();
-}
-
-
-
-
+				});
+			}
+			get_all_courses();
 		});
 	</script>

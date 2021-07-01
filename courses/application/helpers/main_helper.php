@@ -386,8 +386,8 @@ function arShow($array)
 
 function api_url()
 {
-	$path = $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']);
-	$new_path = str_replace("/courses", "", $root);
+	$path = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']);
+	$new_path = str_replace("/courses", "", $path);
 	
 	echo $new_path;
 }

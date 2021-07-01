@@ -18,6 +18,7 @@
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/vendor/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/vendor/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/vendor/datatables.net-select-bs4/css/select.bootstrap4.min.css">
+	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/toastr/toastr.min.css">
 	<!-- Argon CSS -->
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/argon.css?v=1.1.0" type="text/css">
 
@@ -33,6 +34,8 @@
 	<script src="<?php echo base_url(); ?>assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
 	<script src="<?php echo base_url(); ?>assets/plugins/jquery-validation/jquery.validate.min.js"></script>
 	<script src="<?php echo base_url(); ?>assets/plugins/maskedinput/jquery.maskedinput-1.3.min.js"></script>
+	<script src="<?php echo base_url(); ?>assets/js/mustache/mustache.js"></script>
+	<script src="<?php echo base_url(); ?>assets/plugins/toastr/toastr.min.js"></script>
 	<!-- <script src="https://cdn.tiny.cloud/1/71opckoclv8xmv3xsmjmefbky6g16se47k5jsc65cwwnldjo/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script> -->
 	
 	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/4.0.9/inputmask/inputmask.min.js"></script>
