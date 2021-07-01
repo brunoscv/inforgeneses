@@ -165,7 +165,7 @@ function recursiveFormMenuList($name, $menuList, $values = array(), $extra = "")
 	$str = "<ul {$extra}>";
 	foreach ($menuList as $menu) {
 		$checked = (in_array($menu->id, $values)) ? 'checked="checked"' : '';
-		$str .= '<li><label><input ' . $checked . ' name="' . $name . '" value="' . $menu->id . '" type="checkbox" /> ' . $menu->descricao . '</label>';
+		$str .= '<li><label><input ' . $checked . ' name="' . $name . '" value="' . $menu->id . '" type="checkbox" /> ' . $menu->description . '</label>';
 		if (count($menu->filhos) > 0) {
 			$str .= recursiveFormMenuList($name, $menu->filhos, $values);
 		}
@@ -207,7 +207,7 @@ function recursiveMenuNav($menuList, $extra = "")
 						<a class=\"nav-link\" href=\"#navbar-{$menu->id}\" data-toggle=\"collapse\" role=\"button\"
 						   aria-expanded=\"false\" aria-controls=\"navbar-{$menu->id}\">
 							<i class=\"{$menu->icone}\"></i>
-							<span class=\"nav-link-text\">{$menu->descricao}</span>
+							<span class=\"nav-link-text\">{$menu->description}</span>
 						</a>
 						<div class=\"collapse\" id=\"navbar-{$menu->id}\">
 							<ul class=\"nav nav-sm flex-column\">";
@@ -223,7 +223,7 @@ function recursiveMenuNav($menuList, $extra = "")
 						<a class=\"nav-link\" target=\"{$target}\" href=\"{$url}\" role=\"button\"
 						   aria-expanded=\"false\">
 							<i class=\"{$menu->icone}\"></i>
-							<span class=\"nav-link-text\">{$menu->descricao}</span>
+							<span class=\"nav-link-text\">{$menu->description}</span>
 						</a>
 					</li>
 				";
@@ -245,7 +245,7 @@ function recursiveMenuChildNav($menuList, $extra = "")
 			$url = $menu->url;
 			$target = "_blank";
 		}
-		$str .= "<li class=\"nav-item\"><a href=\"{$url}\" target=\"{$target}\" class=\"nav-link\">$menu->descricao</a></li>";
+		$str .= "<li class=\"nav-item\"><a href=\"{$url}\" target=\"{$target}\" class=\"nav-link\">$menu->description</a></li>";
 	}
 	$str .= "</ul>";
 	return $str;
@@ -382,6 +382,14 @@ function arShow($array)
 	echo "<pre>";
 	print_r($array);
 	echo "</pre>";
+}
+
+function api_url()
+{
+	$path = $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']);
+	$new_path = str_replace("/courses", "", $root);
+	
+	echo $new_path;
 }
 
 /**

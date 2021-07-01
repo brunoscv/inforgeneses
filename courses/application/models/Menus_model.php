@@ -2,7 +2,7 @@
 class Menus_model extends CI_Model{
 	
 	public function getMenusRecursivo(){
-		$listaMenus = $this->db->query("SELECT id, menus_id, descricao FROM menus_site ORDER BY descricao ASC")->result();
+		$listaMenus = $this->db->query("SELECT id, menus_id, description FROM menus ORDER BY description ASC")->result();
 		return $this->_arranjaMenu($listaMenus);
 	}
 	
@@ -14,13 +14,13 @@ class Menus_model extends CI_Model{
 		//print_r($perfisId); exit;
 		
 		$this->db->select("m.*")
-				->from("menus_site AS m")
-				->join("perfis_menus_site AS pm","pm.menus_id = m.id","inner")
+				->from("menus AS m")
+				->join("menu_profiles AS mp","mp.menus_id = m.id","inner")
 				->group_by("m.id")
-				->order_by("m.descricao");
+				->order_by("m.description");
 		
 		// foreach($perfisId as $perfil){
-		// 	$this->db->or_where('pm.perfis_id = ', $perfil);
+		// 	$this->db->or_where('mp.perfis_id = ', $perfil);
 		// }
 	
 		return $listaMenus = $this->db->get()->result();

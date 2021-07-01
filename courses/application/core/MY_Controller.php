@@ -16,16 +16,16 @@ class MY_Controller extends CI_Controller
 	protected function _auth(){
 		#return true;
 		
-		$this->data['site'] = $this->session->userdata('site');
-		//$perfis = (is_array($this->data['site']['perfis']) ? count($this->data['site']['perfis']) : 0);
+		$this->data['courses'] = $this->session->userdata('courses');
+		//$perfis = (is_array($this->data['courses']['profiles']) ? count($this->data['courses']['profiles']) : 0);
 
-		//arShow($perfis); exit;
-		if( !$this->data['site'] || !$this->data['site']['perfis'] ){
-			redirect("/auth/login");
+		//arShow($this->data['courses']['profiles']); exit;
+		if( !$this->data['courses'] || !$this->data['courses']['profiles'] ){
+			redirect("auth/login");
 		}
 
 		$this->load->model("Menus_model");
-		$listaMenus = $this->Menus_model->getMenusByPerfis($this->data['site']['perfis']);
+		$listaMenus = $this->Menus_model->getMenusByPerfis($this->data['courses']['profiles']);
 
 		//arShow($listaMenus); exit;
 		
@@ -57,16 +57,6 @@ class MY_Controller extends CI_Controller
 		$configuracoes = new StdClass();
 		$configuracoes->limite_usuarios 	= $this->config->item("limite_usuarios");
 
-		$cliente = FALSE;
-		if( $this->data['site']['clientes_id'] ){
-			$this->load->model("Clientes_model");
-			$cliente = $this->Clientes_model->getCliente($this->data['site']['clientes_id']);
-			if( $cliente->configuracoes ){
-				$configuracoes->limite_usuarios 	= $cliente->configuracoes->limite_usuarios;
-			}
-		}
-		$this->cliente = $cliente;
-		$this->configuracoes = $configuracoes;
 	}
 
 }

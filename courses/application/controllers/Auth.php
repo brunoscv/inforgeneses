@@ -12,10 +12,7 @@ class Auth extends MY_Controller {
 	public function login()
 	{
 		
-		if ($this->session->userdata('courses')['users_ID'])
-		{
-			redirect("dashboard");
-		}
+		//if ($this->session->userdata('courses')['users_ID']){}
 
 		if( $this->input->post("send") ){
 
@@ -29,30 +26,35 @@ class Auth extends MY_Controller {
 				// Verifica a password do usuário e cria a sessão se estiver correta
 				if($this->_resolve_user_login($user_post, $pass_post)) {
 					$user_ID 	= $this->_get_user_ID_from_username($user_post);
-					$user		= $this->_get_user_information_from_ID($user_ID);;
+					$user_info	= $this->_get_user_information_from_ID($user_ID);;
 					$profile 	= $this->_get_user_profile_from_ID($user_ID);
 					$ip_address = $this->input->ip_address();
 					
 					$create_session = array(
 						'users_ID' => $user_ID,
-						'name' => $user->name,
-						'username' => $user->username,
-						'email' => $user->email,
-						'principal' => $user->principal,
+						'name' => $user_info->name,
+						'username' => $user_info->username,
+						'email' => $user_info->email,
+						'principal' => $user_info->principal,
 						'profiles' => $profile,
 						'ip_address' => $ip_address,
 					);
-
+					
+					//arShow($create_session); exit;
 					$this->session->set_userdata('courses', $create_session);
-					redirect();
+					//arShow($this->session->userdata('courses')); exit;
+					redirect("courses/index");
+				} else {
+					// Se a password não estiver correta exibe mensagem de erro
+					
+					$this->session->set_flashdata("msg_error", "senha incorreta!");
+					//redirect('auth/login');				
 				}
-
-				// Se a password não estiver correta exibe mensagem de erro
-				$this->session->set_flashdata("msg_error", "senha incorreta!");
-				redirect('auth/login');				
+			} else {
+				
+				$this->session->set_flashdata("msg_error", "Usuário não encontrado!");
+				//redirect('auth/login');
 			}
-			$this->session->set_flashdata("msg_error", "Usuário não encontrado!");
-			redirect('auth/login');
 		}
 		$this->load->view("modulos/auth/login");
 	}

@@ -71,7 +71,7 @@
 		<!-- Brand -->
 		<div class="sidenav-header d-flex align-items-center">
 			<a class="navbar-brand" href="<?php echo base_url(); ?>dashboard">
-				<img src="<?php echo base_url(); ?>assets/img/theme/logo-seucanto-original.svg" class="navbar-brand-img" alt="...">
+				<img src="<?php echo base_url(); ?>assets/img/brand/blue.png" class="navbar-brand-img" alt="...">
 			</a>
 			<div class="ml-auto">
 				<!-- Sidenav toggler -->
@@ -204,7 +204,7 @@
                     <img alt="Image placeholder" src="<?php echo base_url(); ?>assets/img/brand/favicon.png">
                     </span>
 								<div class="media-body ml-2 d-none d-lg-block">
-									<span class="mb-0 text-sm  font-weight-bold"><?= $site['nome']; ?></span>
+									<span class="mb-0 text-sm  font-weight-bold"><?=  $this->session->userdata('courses')['name']; ?></span>
 								</div>
 							</div>
 						</a>
