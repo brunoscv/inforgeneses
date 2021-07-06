@@ -66,10 +66,12 @@
 	<script id="courses-template" type="x-tmpl-mustache">
 		<tr>
 			<td>{{id}}</td>
-			<td>{{description}}</td>
+			<td><a href="#">{{description}}</a></td>
 			<td>{{price}}</td>
 			<td>{{image}}</td>
-			<td><button type='button' id='btn-course-{{id}}'' class='btn btn-sm btn-warning'> <i class='fa fa-edit'></i></button></td>
+			<td>
+			<button type='button' id='btn-course-{{id}}'' class='btn btn-sm btn-warning'> <i class='fa fa-edit'></i></button>
+			<button type='button' id='btn-course-{{id}}'' class='btn btn-sm btn-danger'> <i class='fa fa-trash'></i></button></td>
 		</tr>	
 	</script>
 	<!-- Script Template Mustache -->
@@ -104,11 +106,11 @@
 						}
 						if(json.length <= 0) {
 							$('#courses-table').html("<tr><td colspan='5' style='text-align:center'>Nenhum resultado encontrado</td></tr>");
-							toastr.warning("Não há cursos cadastrados");
+							toastr.warning("Não foram encontrados cursos cadastrados");
 						}
 					},
 					error: function(){                      
-						toastr.danger("Houve um erro no seu pedido. Tente novamente!");
+						toastr.error("Houve um erro no seu pedido. Tente novamente!");
 					}
 				});
 			}

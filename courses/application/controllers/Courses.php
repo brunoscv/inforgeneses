@@ -13,9 +13,14 @@ class Courses extends MY_Controller {
 		//$this->data['campos']    		 = $camposFiltros;
 	}
 
-	public function index(){
+	public function index(){}
 
-		
+	public function details() {
+		//get the course_id from url		
+		$this->data['course_id'] = $this->uri->segment(3);
 
+		if(!isset($this->data['course_id']) || empty($this->data['course_id'])) {
+			redirect('courses');
+		}
 	}
 }
