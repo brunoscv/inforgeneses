@@ -13,10 +13,10 @@
 						</ol>
 					</nav>
 				</div>
-			<!-- <div class="col-lg-6 col-5 text-right">
-				<a href="#" class="btn btn-sm btn-neutral">New</a>
-				<a href="#" class="btn btn-sm btn-neutral">Filters</a>
-			</div> -->
+				<!-- <div class="col-lg-6 col-5 text-right">
+					<a href="#" class="btn btn-sm btn-neutral">New</a>
+					<a href="<?= site_url()?>courses" class="btn btn-sm btn-neutral">Voltar</a>
+				</div> -->
 			</div>
 		</div>
 	</div>
@@ -66,12 +66,12 @@
 	<script id="courses-template" type="x-tmpl-mustache">
 		<tr>
 			<td>{{id}}</td>
-			<td><a href="#">{{description}}</a></td>
+			<td><a href="#" id='a-course-details' course_id={{id}}>{{description}}</a></td>
 			<td>{{price}}</td>
 			<td>{{image}}</td>
 			<td>
-			<button type='button' id='btn-course-{{id}}'' class='btn btn-sm btn-warning'> <i class='fa fa-edit'></i></button>
-			<button type='button' id='btn-course-{{id}}'' class='btn btn-sm btn-danger'> <i class='fa fa-trash'></i></button></td>
+			<button type='button' id='btn-course-edit' course_id={{id}} class='btn btn-sm btn-warning'> <i class='fa fa-edit'></i></button>
+			<button type='button' id='btn-course-delete' class='btn btn-sm btn-danger'> <i class='fa fa-trash'></i></button></td>
 		</tr>	
 	</script>
 	<!-- Script Template Mustache -->
@@ -79,6 +79,11 @@
 	<script type="text/javascript" src="<?php echo base_url(); ?>assets/modulos/courses/js.js"></script>
 	<script>
 		jQuery(function() {
+			$('body').on('click', '#a-course-details', function(event) {
+				event.preventDefault();
+				var course_id = $(this).attr('course_id');
+				window.location.href="<?= site_url()?>courses/details/" + course_id;
+			});
 			function get_all_courses(){
 				$.ajax({
 					type: "get",
@@ -99,9 +104,9 @@
 									var rendered = Mustache.render(template, json[i]);
 									$('#courses-table').append(rendered);
 								}
-								toastr.success("Cursos carregados com sucesso.");	
+								toastr.success("Curso carregado com sucesso.");	
 							} catch(e) {     
-								toastr.warning("Não foram encontrados cursos cadastrados");
+								toastr.warning("Não foram encontradas informações sobre esse curso");
 							}
 						}
 						if(json.length <= 0) {

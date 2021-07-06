@@ -13,10 +13,10 @@
 						</ol>
 					</nav>
 				</div>
-			<!-- <div class="col-lg-6 col-5 text-right">
-				<a href="#" class="btn btn-sm btn-neutral">New</a>
-				<a href="#" class="btn btn-sm btn-neutral">Filters</a>
-			</div> -->
+                <div class="col-lg-6 col-5 text-right">
+					<!-- <a href="#" class="btn btn-sm btn-neutral">New</a> -->
+					<a href="<?= site_url()?>courses" class="btn btn-sm btn-neutral"><i class="fa fa-list mr-2"></i>Listagem</a>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -64,7 +64,7 @@
 	<script>
 		jQuery(function() {
             var course_id = <?= $course_id; ?>;
-			function get_all_courses(){
+			function get_course_detail(){
 				$.ajax({
 					type: "get",
 					url: "<?= api_url(); ?>/api/v1/courses/" + course_id,
@@ -78,7 +78,6 @@
 					success: function(json){
                         $('#course-detail').html("");
                         try{
-                            
                             var template = $('#courses-template').html();
                             Mustache.parse(template); // optional, speeds up future uses
                             var rendered = Mustache.render(template, json);
@@ -95,6 +94,6 @@
 					}
 				});
 			}
-			get_all_courses();
+			get_course_detail();
 		});
 	</script>
