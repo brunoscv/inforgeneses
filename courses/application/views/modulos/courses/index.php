@@ -66,7 +66,7 @@
 	<script id="courses-template" type="x-tmpl-mustache">
 		<tr>
 			<td>{{id}}</td>
-			<td><a href="#" id='a-course-details' course_id={{id}}>{{description}}</a></td>
+			<td><a href="#" id='a-course-details' course_id={{id}}>{{name}}</a></td>
 			<td>{{price}}</td>
 			<td>{{image}}</td>
 			<td>

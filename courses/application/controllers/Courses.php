@@ -18,6 +18,7 @@ class Courses extends MY_Controller {
 	public function details() {
 		//get the course_id from url		
 		$this->data['course_id'] = $this->uri->segment(3);
+		$this->data['user_id'] = $this->session->userdata('courses')['users_ID'];
 
 		if(!isset($this->data['course_id']) || empty($this->data['course_id'])) {
 			redirect('courses');

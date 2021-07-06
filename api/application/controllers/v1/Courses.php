@@ -17,8 +17,9 @@ class Courses extends REST_Controller {
         $this->methods['index_get']['limit'] = 500; // 500 requisicoes por hora por user/key
         $this->methods['index_post']['limit'] = 100; // 100 requisicoes por hora por user/key
         $this->methods['index_delete']['limit'] = 50; // 50 requisicoes por hora por user/key
-
+        
         $this->load->database();
+        $this->load->model("Courses_model");
     }
 
     /**
@@ -30,12 +31,12 @@ class Courses extends REST_Controller {
 	{
 
         if(!empty($id)) {
-            $data = $this->db->get_where("courses", ['id' => $id])->row_array();
+            $data = $this->Courses_model->get_course_by_id($id);
             $this->response($data, REST_Controller::HTTP_OK);
         }
 
         if(empty($id)) {
-            $data = $this->db->get("courses")->result();
+            $data = $this->Courses_model->get_all_courses();
             $this->response($data, REST_Controller::HTTP_OK);
         }
 
